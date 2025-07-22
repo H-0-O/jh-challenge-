@@ -8,6 +8,6 @@ export interface UserJWTPayload {
 
 declare module 'express' {
   interface Request {
-    user?: User; // or whatever type you return from JwtStrategy
+    user: User; // or whatever type you return from JwtStrategy
   }
 }

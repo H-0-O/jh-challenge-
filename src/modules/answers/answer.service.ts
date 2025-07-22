@@ -11,18 +11,15 @@ import { CreateAnswerDTO, StatisticsResponseDTO } from './dtos/answer.dto';
 import { Question } from '../questions/entities/question.entity';
 import { User } from '../users/entities/user.entity';
 import { Value, Vote } from './entities/vote.entity';
-import { Request } from 'express';
 
-@Injectable({ scope: Scope.REQUEST })
+@Injectable()
 export class AnswerService extends BaseService<Answer> {
-  constructor(@Inject(Request) private readonly request: Request) {
+  constructor() {
     super(Answer);
   }
 
-  public async create(questionID: number, dto: CreateAnswerDTO) {
+  public async create(questionID: number, dto: CreateAnswerDTO , userID: number) {
     const answer = new Answer();
-    const userID = this.request.user?.id;
-    if (!userID) throw new UnauthorizedException('User not authenticated.');
 
     answer.assign({
       content: dto.content,
@@ -34,7 +31,7 @@ export class AnswerService extends BaseService<Answer> {
     return answer;
   }
 
-  public async markCorrect(id: number) {
+  public async markCorrect(id: number , userID: number) {
     const answer = await this.entityManager.findOneOrFail(
       Answer,
       {
@@ -45,7 +42,7 @@ export class AnswerService extends BaseService<Answer> {
       },
     );
 
-    if (answer.question.user.id != this.request.user?.id) {
+    if (answer.question.user.id != userID) {
       throw new ForbiddenException();
     }
 
@@ -54,7 +51,7 @@ export class AnswerService extends BaseService<Answer> {
     await this.entityManager.persistAndFlush(answer);
   }
 
-  public async vote(answerID: number, upDown: Value) {
+  public async vote(answerID: number, upDown: Value , userID: number) {
     const answer = await this.entityManager.findOneOrFail(
       Answer,
       {
@@ -65,7 +62,7 @@ export class AnswerService extends BaseService<Answer> {
         populateWhere: {
           votes: {
             user: {
-              id: this.request.user?.id,
+              id: userID,
             },
           },
         },
@@ -74,8 +71,6 @@ export class AnswerService extends BaseService<Answer> {
 
     if (!answer.votes.isEmpty()) return;
 
-    const userID = this.request.user?.id;
-    if (!userID) throw new UnauthorizedException('User not authenticated.');
 
     const vote = new Vote();
     vote.assign({

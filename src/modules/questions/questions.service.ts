@@ -1,4 +1,4 @@
-import { HttpException, Inject, Injectable, Scope, UnauthorizedException } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { BaseService } from 'src/common/utils/base.service';
 import { Question } from './entities/question.entity';
 import {
@@ -6,27 +6,20 @@ import {
   ShowWithAnswerCountsDTO,
 } from './dtos/question.dto';
 import { User } from '../users/entities/user.entity';
-import { FilterQuery, LoadStrategy, raw, wrap } from '@mikro-orm/core';
+import { raw } from '@mikro-orm/core';
 import { CreateAnswerDTO } from '../answers/dtos/answer.dto';
 import { AnswerService } from '../answers/answer.service';
 import { Answer } from '../answers/entities/answer.entity';
 import { Tag } from '../tags/entities/tag.entity';
-import { Request } from 'express';
 
-@Injectable({ scope: Scope.REQUEST })
+@Injectable()
 export class QuestionService extends BaseService<Question> {
-  constructor(
-    private readonly answerService: AnswerService,
-    @Inject(Request) private readonly request: Request,
-  ) {
+  constructor(private readonly answerService: AnswerService) {
     super(Question);
   }
 
-  public async create(dto: CreateQuestionDTO) {
+  public async create(dto: CreateQuestionDTO, userID: number) {
     const question = new Question();
-
-    const userID = this.request.user?.id;
-    if (!userID) throw new UnauthorizedException('User not authenticated.');
 
     question.assign({
       user: this.entityManager.getReference(User, userID),
@@ -72,8 +65,12 @@ export class QuestionService extends BaseService<Question> {
     // };
   }
 
-  public async answer(questionID: number, createAnswerDTO: CreateAnswerDTO) {
-    return await this.answerService.create(questionID, createAnswerDTO);
+  public async answer(
+    questionID: number,
+    createAnswerDTO: CreateAnswerDTO,
+    userID: number,
+  ) {
+    return await this.answerService.create(questionID, createAnswerDTO, userID);
   }
 
   public async assignTags(questionID: number, tagIds: number[]) {

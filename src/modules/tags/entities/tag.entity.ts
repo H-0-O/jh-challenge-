@@ -14,6 +14,6 @@ export class Tag extends BaseEntity {
     })
     name:string
 
-    @ManyToMany(() => Question)
+    @ManyToMany(() => Question , q => q.tags)
     questions: Collection<Question> = new Collection(this)
 }
