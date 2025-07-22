@@ -1,9 +1,22 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { QuestionService } from './questions.service';
-import { CreateQuestionDTO, showWithAnswerCountsDTO } from './dtos/question.dto';
+import {
+  AssignTagDTO,
+  CreateQuestionDTO,
+  ShowWithAnswerCountsDTO,
+} from './dtos/question.dto';
 import { ApiOkResponse } from '@nestjs/swagger';
 import { Question } from './entities/question.entity';
 import { CreateAnswerDTO } from '../answers/dtos/answer.dto';
+
 
 @Controller('/questions')
 export class QuestionController {
@@ -19,8 +32,12 @@ export class QuestionController {
 
   @ApiOkResponse()
   @Get('/')
-  public async index(@Query('page') page = 1, @Query('limit') limit = 10) {
-    const data = await this.questionService.paginate(page, limit);
+  public async index(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('tag') tag?: string
+  ) {
+    const data = await this.questionService.paginateAndFilter(page, limit, tag);
 
     return {
       total: data[1],
@@ -29,20 +46,22 @@ export class QuestionController {
   }
 
   @ApiOkResponse({
-    type: showWithAnswerCountsDTO
+    type: ShowWithAnswerCountsDTO,
   })
   @Get('/:id')
   public async show(@Param('id') id: number) {
     return this.questionService.showWithAnswerCounts(id);
   }
 
+  @HttpCode(204)
   @Post('/:id/answer')
   public async answer(@Param('id') id: number, @Body() dto: CreateAnswerDTO) {
     return (await this.questionService.answer(id, dto)).toObject();
   }
 
+  @HttpCode(204)
   @Post('/:id/tags')
-  public async assignTag(@Param('id') id: number){
-
+  public async assignTag(@Param('id') id: number, @Body() dto: AssignTagDTO) {
+    await this.questionService.assignTags(id, dto.tagIDs);
   }
 }

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, MaxLength, MinLength } from 'class-validator';
+import { IsArray, IsString, MaxLength, MinLength } from 'class-validator';
 import { Answer } from 'src/modules/answers/entities/answer.entity';
 import { Question } from '../entities/question.entity';
 import { User } from 'src/modules/users/entities/user.entity';
@@ -16,7 +16,13 @@ export class CreateQuestionDTO {
   description: string;
 }
 
-export class showWithAnswerCountsDTO {
+export class AssignTagDTO {
+  @ApiProperty()
+  @IsArray()
+  tagIDs: number[]
+}
+
+export class ShowWithAnswerCountsDTO {
   @ApiProperty()
   id: number;
 
