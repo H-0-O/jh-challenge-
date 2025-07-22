@@ -5,13 +5,17 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { UserModule } from './modules/users/user.module';
 import { TagModule } from './modules/tags/tag.module';
+import { QuestionModule } from './modules/questions/questions.module';
+import { AnswerModule } from './modules/answers/answer.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     MikroOrmModule.forRoot(OrmConfig),
 
     UserModule,
-    TagModule
+    TagModule,
+    QuestionModule,
+    AnswerModule
   ],
 
   providers: [
