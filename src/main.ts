@@ -8,8 +8,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const docBuilder = new DocumentBuilder()
-    .setTitle('Gamino Document')
-    .setDescription('Gamino Rest API Document')
+    .setTitle('Document')
+    .setDescription(' Rest API Document')
     .setVersion('0.0.1')
     .addBearerAuth(
       {
