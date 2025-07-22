@@ -1,4 +1,4 @@
-import { Collection, Entity, ManyToMany, ManyToOne, OneToMany, Property } from '@mikro-orm/core';
+import { Collection, Entity, Index, ManyToMany, ManyToOne, OneToMany, Property } from '@mikro-orm/core';
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseEntity } from 'src/common/utils/base.entity';
 import { Answer } from 'src/modules/answers/entities/answer.entity';
@@ -26,6 +26,7 @@ export class Question extends BaseEntity {
   @ManyToOne(() => User , {hidden: true})
   user: User;
 
+  @Index()
   @OneToMany(() => Answer , answer => answer.question)
   answers: Collection<Answer> = new Collection(this)
 

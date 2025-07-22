@@ -13,10 +13,9 @@ import {
   CreateQuestionDTO,
   ShowWithAnswerCountsDTO,
 } from './dtos/question.dto';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiQuery } from '@nestjs/swagger';
 import { Question } from './entities/question.entity';
 import { CreateAnswerDTO } from '../answers/dtos/answer.dto';
-
 
 @Controller('/questions')
 export class QuestionController {
@@ -29,13 +28,27 @@ export class QuestionController {
   public async create(@Body() dto: CreateQuestionDTO) {
     return (await this.questionService.create(dto)).toObject();
   }
-
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'tag',
+    required: false,
+    type: String,
+  })
   @ApiOkResponse()
   @Get('/')
   public async index(
     @Query('page') page = 1,
     @Query('limit') limit = 10,
-    @Query('tag') tag?: string
+    @Query('tag') tag?: string,
   ) {
     const data = await this.questionService.paginateAndFilter(page, limit, tag);
 

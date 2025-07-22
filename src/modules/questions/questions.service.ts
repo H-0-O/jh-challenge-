@@ -14,9 +14,7 @@ import { Tag } from '../tags/entities/tag.entity';
 
 @Injectable()
 export class QuestionService extends BaseService<Question> {
-  constructor(
-    private readonly answerService: AnswerService,
-  ) {
+  constructor(private readonly answerService: AnswerService) {
     super(Question);
   }
 
@@ -98,14 +96,20 @@ export class QuestionService extends BaseService<Question> {
     const where = {};
     if (tag) {
       where['tags'] = {
-        name: tag,
+        name: {
+          $like: tag,
+        },
       };
     }
 
-    return await this.entityManager.findAndCount<Question, 'tags'>(Question, where, {
-      populate: tag ? ['tags'] : [],
-      limit: limit,
-      offset,
-    });
+    return await this.entityManager.findAndCount<Question, 'tags'>(
+      Question,
+      where,
+      {
+        populate: tag ? ['tags'] : [],
+        limit: limit,
+        offset,
+      },
+    );
   }
 }

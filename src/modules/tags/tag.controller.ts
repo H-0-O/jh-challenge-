@@ -18,6 +18,6 @@ export class TagController {
 
   @Get('/')
   public async index() {
-    return await this.tagService.all();
+    return (await this.tagService.all()).map(t => t.toObject());
   }
 }

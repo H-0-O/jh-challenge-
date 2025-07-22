@@ -1,4 +1,4 @@
-import { Collection, Entity, ManyToMany, PrimaryKey, Property } from "@mikro-orm/core";
+import { Collection, Entity, Index, ManyToMany, PrimaryKey, Property } from "@mikro-orm/core";
 import { BaseEntity } from "src/common/utils/base.entity";
 import { Question } from "src/modules/questions/entities/question.entity";
 
@@ -7,6 +7,7 @@ import { Question } from "src/modules/questions/entities/question.entity";
 })
 export class Tag extends BaseEntity {
 
+    @Index()
     @Property({
         type: 'varchar',
         length: 50
