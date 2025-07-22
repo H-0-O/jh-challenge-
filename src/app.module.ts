@@ -7,6 +7,7 @@ import { UserModule } from './modules/users/user.module';
 import { TagModule } from './modules/tags/tag.module';
 import { QuestionModule } from './modules/questions/questions.module';
 import { AnswerModule } from './modules/answers/answer.module';
+import { AuthModule } from './modules/auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -15,7 +16,8 @@ import { AnswerModule } from './modules/answers/answer.module';
     UserModule,
     TagModule,
     QuestionModule,
-    AnswerModule
+    AnswerModule,
+    AuthModule
   ],
 
   providers: [

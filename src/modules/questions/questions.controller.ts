@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { QuestionService } from './questions.service';
 import {
@@ -16,11 +17,13 @@ import {
 import { ApiOkResponse, ApiQuery } from '@nestjs/swagger';
 import { Question } from './entities/question.entity';
 import { CreateAnswerDTO } from '../answers/dtos/answer.dto';
+import { AuthGuard } from '../auth/auth.gaurd';
 
 @Controller('/questions')
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: Question,
   })
@@ -28,6 +31,7 @@ export class QuestionController {
   public async create(@Body() dto: CreateQuestionDTO) {
     return (await this.questionService.create(dto)).toObject();
   }
+
   @ApiQuery({
     name: 'page',
     required: false,
@@ -66,12 +70,14 @@ export class QuestionController {
     return this.questionService.showWithAnswerCounts(id);
   }
 
+  @UseGuards(AuthGuard)
   @HttpCode(204)
   @Post('/:id/answer')
   public async answer(@Param('id') id: number, @Body() dto: CreateAnswerDTO) {
     return (await this.questionService.answer(id, dto)).toObject();
   }
 
+  @UseGuards(AuthGuard)
   @HttpCode(204)
   @Post('/:id/tags')
   public async assignTag(@Param('id') id: number, @Body() dto: AssignTagDTO) {

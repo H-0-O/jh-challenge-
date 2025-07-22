@@ -16,3 +16,14 @@ export class CreateUserDto {
     @IsStrongPassword()
     password: string
 }
+
+
+export class LoginDTO {
+    @ApiProperty()
+    @IsEmail()
+    email: string
+
+    @ApiProperty()
+    @IsString()
+    password: string
+}
