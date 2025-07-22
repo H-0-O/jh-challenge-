@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dtos/user.dto';
 import { BaseService } from 'src/common/utils/base.service';
-import { User } from './user.entity';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService extends BaseService<User> {
