@@ -30,6 +30,6 @@ export class Question extends BaseEntity {
   @OneToMany(() => Answer , answer => answer.question)
   answers: Collection<Answer> = new Collection(this)
 
-  @ManyToMany(() => Tag)
+  @ManyToMany(() => Tag , 'questions' , {owner: true})
   tags: Collection<Tag> = new Collection(this)
 }

@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable, Scope, UnauthorizedException } from '@nestjs/common';
 import { BaseService } from 'src/common/utils/base.service';
 import { Question } from './entities/question.entity';
 import {
@@ -11,17 +11,25 @@ import { CreateAnswerDTO } from '../answers/dtos/answer.dto';
 import { AnswerService } from '../answers/answer.service';
 import { Answer } from '../answers/entities/answer.entity';
 import { Tag } from '../tags/entities/tag.entity';
+import { Request } from 'express';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class QuestionService extends BaseService<Question> {
-  constructor(private readonly answerService: AnswerService) {
+  constructor(
+    private readonly answerService: AnswerService,
+    @Inject(Request) private readonly request: Request,
+  ) {
     super(Question);
   }
 
   public async create(dto: CreateQuestionDTO) {
     const question = new Question();
+
+    const userID = this.request.user?.id;
+    if (!userID) throw new UnauthorizedException('User not authenticated.');
+
     question.assign({
-      user: this.entityManager.getReference(User, 2),
+      user: this.entityManager.getReference(User, userID),
       title: dto.title,
       description: dto.description,
     });
